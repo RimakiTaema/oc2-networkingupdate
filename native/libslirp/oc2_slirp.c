@@ -9,10 +9,15 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <ws2tcpip.h>
+typedef SSIZE_T oc2_slirp_ssize_t;
+typedef SOCKET oc2_slirp_socket_t;
 #else
 #include <arpa/inet.h>
 #include <poll.h>
+#include <sys/types.h>
 #include <time.h>
+typedef ssize_t oc2_slirp_ssize_t;
+typedef int oc2_slirp_socket_t;
 #endif
 
 #include <slirp/libslirp.h>
@@ -52,10 +57,10 @@ static int64_t clock_ns(void *opaque) {
 #endif
 }
 
-static slirp_ssize_t send_packet(const void *buffer, size_t length, void *opaque) {
+static oc2_slirp_ssize_t send_packet(const void *buffer, size_t length, void *opaque) {
     oc2_slirp *instance = opaque;
     if (length > OC2_SLIRP_MAX_FRAME_SIZE || instance->count == OC2_SLIRP_MAX_FRAMES) {
-        return (slirp_ssize_t) length;
+        return (oc2_slirp_ssize_t) length;
     }
 
     struct oc2_frame *frame = &instance->frames[instance->write_index];
@@ -63,17 +68,17 @@ static slirp_ssize_t send_packet(const void *buffer, size_t length, void *opaque
     frame->length = length;
     instance->write_index = (instance->write_index + 1) % OC2_SLIRP_MAX_FRAMES;
     instance->count++;
-    return (slirp_ssize_t) length;
+    return (oc2_slirp_ssize_t) length;
 }
 
-static int add_poll_socket(int socket, int events, void *opaque) {
+static int add_poll_socket(oc2_slirp_socket_t socket, int events, void *opaque) {
     oc2_slirp *instance = opaque;
     if (instance->poll_count == OC2_SLIRP_MAX_POLLS) {
         return -1;
     }
 
     struct pollfd *poll = &instance->polls[instance->poll_count];
-    poll->fd = (slirp_os_socket) socket;
+    poll->fd = socket;
     poll->events = 0;
     poll->revents = 0;
     if (events & SLIRP_POLL_IN) poll->events |= POLLIN;
