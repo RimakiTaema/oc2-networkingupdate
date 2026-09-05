@@ -25,7 +25,51 @@ env:
   SHOULD_PUBLISH_MAVEN: ${{ github.event_name == 'release' || inputs.publish }}
 
 jobs:
+  native:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            shell: bash
+            platform: linux-x86_64
+            install: sudo apt-get update && sudo apt-get install -y libslirp-dev cmake
+            generator: ""
+          - os: windows-latest
+            shell: msys2 {0}
+            platform: windows-x86_64
+            install: pacman --noconfirm -S --needed mingw-w64-x86_64-gcc mingw-w64-x86_64-libslirp mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja
+            generator: -G Ninja
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+      - run: ${{ matrix.install }}
+      - run: cmake -S native/libslirp -B build/native ${{ matrix.generator }} -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build/native
+      - run: ./build/native/oc2-slirp-smoke
+      - if: runner.os == 'Linux'
+        run: mkdir -p native-package/${{ matrix.platform }} && cp build/native/liboc2slirp.so native-package/${{ matrix.platform }}/liboc2slirp.so
+      - if: runner.os == 'Windows'
+        run: mkdir -p native-package/${{ matrix.platform }} && cp build/native/oc2slirp.dll native-package/${{ matrix.platform }}/oc2slirp.dll
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-${{ matrix.platform }}
+          path: native-package
+
   build:
+    needs: native
     runs-on: ubuntu-latest
     outputs:
       mc_version: ${{ steps.split_tag.outputs.mc_version }}
@@ -54,8 +98,14 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           validate-wrappers: true
+      - name: Download native libraries
+        uses: actions/download-artifact@v8
+        with:
+          pattern: native-*
+          path: native-package
+          merge-multiple: true
       - name: Build with Gradle
-        run: ./gradlew -PmodVersion='${{ steps.split_tag.outputs.mod_version }}' build
+        run: ./gradlew -PmodVersion='${{ steps.split_tag.outputs.mod_version }}' -PnativeLibDir='${{ github.workspace }}/native-package' build
 
       - name: Remove shadow JARs
         run: |
