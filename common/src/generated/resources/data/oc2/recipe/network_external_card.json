@@ -5,8 +5,9 @@
     "B": { "item": "oc2:circuit_board" },
     "G": { "tag": "c:glass_blocks" },
     "I": { "tag": "c:ingots/iron" },
-    "T": { "item": "oc2:transistor" }
+    "T": { "item": "oc2:transistor" },
+    "R": { "item": "minecraft:redstone" }
   },
-  "pattern": ["IGT", " B "],
+  "pattern": ["IGT", "BR "],
   "result": { "count": 1, "id": "oc2:network_external_card" }
 }
