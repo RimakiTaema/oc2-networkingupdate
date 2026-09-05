@@ -22,6 +22,7 @@ endif()
 add_library(oc2slirp SHARED oc2_slirp.c oc2_slirp_jni.c)
 target_include_directories(oc2slirp PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_include_directories(oc2slirp PRIVATE "${JNI_INCLUDE_DIR}" "${JNI_PLATFORM_INCLUDE_DIR}")
+set_target_properties(oc2slirp PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 find_path(SLIRP_INCLUDE_DIR slirp/libslirp.h)
 find_library(SLIRP_LIBRARY NAMES slirp libslirp)
