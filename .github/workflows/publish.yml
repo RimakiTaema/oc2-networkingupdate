@@ -148,5 +148,3 @@ jobs:
 
           modrinth-id: b0YVdq8k
           modrinth-token: ${{ secrets.MODRINTH_API_KEY }}
-          curseforge-id: 437654
-          curseforge-token: ${{ secrets.CURSEFORGE_API_KEY }}
