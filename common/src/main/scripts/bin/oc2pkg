@@ -1,0 +1,78 @@
+#!/bin/sh
+
+# Small package manager for the OC2 RISC-V image.
+# Repository index lines: name version archive-url sha256
+
+set -eu
+
+CONFIG_DIR="${OC2PKG_CONFIG_DIR:-/etc/oc2pkg}"
+STATE_DIR="${OC2PKG_STATE_DIR:-/var/lib/oc2pkg}"
+ROOT_DIR="${OC2PKG_ROOT_DIR:-/}"
+REPOSITORY="${OC2PKG_REPOSITORY:-}"
+
+usage() { echo "usage: oc2pkg {update|list|install} [package ...]" >&2; exit 2; }
+die() { echo "oc2pkg: $*" >&2; exit 1; }
+
+repository() {
+    if [ -n "$REPOSITORY" ]; then
+        echo "$REPOSITORY"
+    elif [ -f "$CONFIG_DIR/repository" ]; then
+        sed -n 's/^[[:space:]]*//; s/[[:space:]]*$//; /^#/d; /^$/d; 1p' "$CONFIG_DIR/repository"
+    else
+        die "no repository configured; set OC2PKG_REPOSITORY or create $CONFIG_DIR/repository"
+    fi
+}
+
+download() {
+    url="$1"
+    destination="$2"
+    case "$url" in
+        https://*|http://*) wget -q -O "$destination" "$url" ;;
+        *) die "repository URL must use HTTP or HTTPS" ;;
+    esac
+}
+
+update() {
+    command -v wget >/dev/null 2>&1 || die "wget is required"
+    mkdir -p "$STATE_DIR"
+    base=$(repository)
+    case "$base" in */) ;; *) base="$base/" ;; esac
+    download "${base}index" "$STATE_DIR/index.new"
+    mv "$STATE_DIR/index.new" "$STATE_DIR/index"
+    echo "updated package index from $base"
+}
+
+entry() {
+    package="$1"
+    [ -f "$STATE_DIR/index" ] || die "package index missing; run: oc2pkg update"
+    awk -v package="$package" '$1 == package { print; found = 1; exit } END { if (!found) exit 1 }' "$STATE_DIR/index"
+}
+
+install_package() {
+    command -v wget >/dev/null 2>&1 || die "wget is required"
+    command -v tar >/dev/null 2>&1 || die "tar is required"
+    package="$1"
+    line=$(entry "$package") || die "package not found: $package"
+    set -- $line
+    [ "$#" -ge 4 ] || die "invalid index entry for $package"
+    name="$1"; version="$2"; url="$3"; expected_sha="$4"
+    mkdir -p "$STATE_DIR/cache" "$STATE_DIR/installed"
+    archive="$STATE_DIR/cache/$name-$version.tar"
+    download "$url" "$archive"
+    if command -v sha256sum >/dev/null 2>&1; then
+        actual_sha=$(sha256sum "$archive" | awk '{print $1}')
+        [ "$actual_sha" = "$expected_sha" ] || die "checksum mismatch for $name"
+    else
+        echo "warning: sha256sum unavailable; skipping checksum verification" >&2
+    fi
+    tar -xpf "$archive" -C "$ROOT_DIR"
+    printf '%s %s\n' "$version" "$expected_sha" > "$STATE_DIR/installed/$name"
+    echo "installed $name $version"
+}
+
+case "${1:-}" in
+    update) [ "$#" -eq 1 ] || usage; update ;;
+    list) [ "$#" -eq 1 ] || usage; [ -f "$STATE_DIR/index" ] || die "package index missing; run: oc2pkg update"; cat "$STATE_DIR/index" ;;
+    install) [ "$#" -ge 2 ] || usage; shift; for package in "$@"; do install_package "$package"; done ;;
+    *) usage ;;
+esac

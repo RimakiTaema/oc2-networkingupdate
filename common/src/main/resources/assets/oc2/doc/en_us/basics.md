@@ -24,6 +24,19 @@ The default Linux distribution contains some basic command line tools, and the a
 
 Native devices use regular Linux drivers. For example, hard drives show up as `/dev/vdaX` devices and can be formatted and mounted regularly.
 
+### Packages
+
+The RISC-V image includes the `oc2pkg` package manager. It is staged into the guest `PATH` during boot. Configure an HTTPS repository before using it:
+
+```sh
+mkdir -p /etc/oc2pkg
+echo https://example.invalid/oc2/packages > /etc/oc2pkg/repository
+oc2pkg update
+oc2pkg install package-name
+```
+
+The repository index has one package per line in the form `name version archive-url sha256`. Package archives are tar files rooted at `/`. This manager is separate from Debian `apt` because the supplied image is Buildroot based.
+
 Computers provide two hardware clock (RTC) devices. The first one counts time in a scale most users will think in. It is used by default, for example by command line tools like `date` and `time`. The second one measures time as it works in the world the computer runs in. To obtain the current world time, use `hwclock -f /dev/rtc1`.
 
 ## CP/M

@@ -82,6 +82,11 @@ public final class Config {
     public static int ethernetFrameTimeToLive = 12;
     @Path("admin.virtual_network")
     public static int hubEthernetFramesPerTick = 32;
+    @Path("admin.external_network")
+    public static boolean externalNetworkEnabled = false;
+    @Path("admin.external_network")
+    @Min(0)
+    public static int externalNetworkFramesPerTick = 32;
 
     public static int cpuEnergyPerTick(@Nullable final ArchitectureType architecture) {
         if (architecture == null) {

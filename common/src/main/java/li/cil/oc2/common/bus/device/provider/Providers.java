@@ -83,6 +83,7 @@ public final class Providers {
         registry.accept("flash_memory", FlashMemoryItemDeviceProvider::new);
         registry.accept("redstone_interface_card", RedstoneInterfaceCardItemDeviceProvider::new);
         registry.accept("network_interface_card", NetworkInterfaceCardItemDeviceProvider::new);
+        registry.accept("network_external_card", NetworkExternalCardItemDeviceProvider::new);
         registry.accept("network_tunnel_card", NetworkTunnelCardItemDeviceProvider::new);
         registry.accept("file_import_export_card", FileImportExportCardItemDeviceProvider::new);
         registry.accept("sound_card", SoundCardItemDeviceProvider::new);

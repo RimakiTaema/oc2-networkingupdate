@@ -47,6 +47,8 @@
   "item.oc2.redstone_interface_card.desc": "Emits and reads redstone signals through the Computer.",
   "item.oc2.network_interface_card": "Network Interface Card",
   "item.oc2.network_interface_card.desc": "Sends and receives network packets via attached Network Connectors.",
+  "item.oc2.network_external_card": "External Network Card",
+  "item.oc2.network_external_card.desc": "Provides opt-in Internet access to RISC-V computers through the server host.",
   "item.oc2.network_interface_card.is_configured": "Has connectivity configuration.",
   "item.oc2.network_tunnel_card": "Network Tunnel Card",
   "item.oc2.network_tunnel_card.desc": "Sends and receives network packets to a linked device.",

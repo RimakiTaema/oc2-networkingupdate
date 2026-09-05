@@ -12,6 +12,7 @@
     "oc2:memory_medium",
     "oc2:memory_large",
     "oc2:network_interface_card",
+    "oc2:network_external_card",
     "oc2:network_tunnel_card",
     "oc2:network_tunnel_module",
     "oc2:projector"

@@ -12,6 +12,7 @@ import li.cil.oc2.common.bus.device.provider.ProviderRegistry;
 import li.cil.oc2.common.bus.device.rpc.RPCItemStackTagFilters;
 import li.cil.oc2.common.bus.device.rpc.RPCTypeAdapters;
 import li.cil.oc2.common.bus.device.vm.item.NetworkTunnelDevice;
+import li.cil.oc2.common.bus.device.vm.item.NetworkExternalCardDevice;
 import li.cil.oc2.common.container.Containers;
 import li.cil.oc2.common.entity.Entities;
 import li.cil.oc2.common.item.ItemGroup;
@@ -72,6 +73,7 @@ public final class Main {
         FileSystems.initialize();
         RPCItemStackTagFilters.initialize();
         NetworkTunnelDevice.TunnelManager.initialize();
+        NetworkExternalCardDevice.initialize();
     }
 
     private Main() {

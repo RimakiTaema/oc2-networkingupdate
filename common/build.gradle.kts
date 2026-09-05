@@ -47,6 +47,13 @@ tasks {
 
     processResources {
         dependsOn("packageScripts")
+
+        val nativeLibDir = providers.gradleProperty("nativeLibDir")
+        if (nativeLibDir.isPresent) {
+            from(nativeLibDir.map { file(it) }) {
+                into("assets/${modId}/native")
+            }
+        }
     }
 
     test {
