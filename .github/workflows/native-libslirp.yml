@@ -62,7 +62,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: oc2slirp-windows
-          path: build/native/oc2slirp.dll
+          path: build/native/liboc2slirp.dll
       - if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:

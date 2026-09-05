@@ -75,7 +75,7 @@ jobs:
       - if: runner.os == 'Linux'
         run: mkdir -p native-package/${{ matrix.platform }} && cp build/native/liboc2slirp.so native-package/${{ matrix.platform }}/liboc2slirp.so
       - if: runner.os == 'Windows'
-        run: mkdir -p native-package/${{ matrix.platform }} && cp build/native/oc2slirp.dll native-package/${{ matrix.platform }}/oc2slirp.dll
+        run: mkdir -p native-package/${{ matrix.platform }} && cp build/native/liboc2slirp.dll native-package/${{ matrix.platform }}/oc2slirp.dll
       - if: runner.os == 'macOS'
         run: mkdir -p native-package/${{ matrix.platform }} && cp build/native/liboc2slirp.dylib native-package/${{ matrix.platform }}/liboc2slirp.dylib
       - uses: actions/upload-artifact@v7
