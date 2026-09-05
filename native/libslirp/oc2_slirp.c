@@ -102,14 +102,14 @@ static oc2_slirp_ssize_t send_packet(const void *buffer, size_t length, void *op
     return (oc2_slirp_ssize_t) length;
 }
 
-static int add_poll_socket(oc2_slirp_socket_t socket, int events, void *opaque) {
+static int add_poll_socket(int socket, int events, void *opaque) {
     oc2_slirp *instance = opaque;
     if (instance->poll_count == OC2_SLIRP_MAX_POLLS) {
         return -1;
     }
 
     struct pollfd *poll = &instance->polls[instance->poll_count];
-    poll->fd = socket;
+    poll->fd = (oc2_slirp_socket_t) socket;
     poll->events = 0;
     poll->revents = 0;
     if (events & SLIRP_POLL_IN) poll->events |= POLLIN;
