@@ -6,12 +6,20 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#if defined(_WIN32) && defined(OC2_SLIRP_BUILD)
+#define OC2_SLIRP_API __declspec(dllexport)
+#elif defined(_WIN32)
+#define OC2_SLIRP_API __declspec(dllimport)
+#else
+#define OC2_SLIRP_API
+#endif
+
 typedef struct oc2_slirp oc2_slirp;
 
-oc2_slirp *oc2_slirp_create(void);
-void oc2_slirp_destroy(oc2_slirp *instance);
-void oc2_slirp_input(oc2_slirp *instance, const uint8_t *frame, size_t length);
-void oc2_slirp_poll(oc2_slirp *instance, int timeout_ms);
-size_t oc2_slirp_next_frame(oc2_slirp *instance, uint8_t *destination, size_t capacity);
+OC2_SLIRP_API oc2_slirp *oc2_slirp_create(void);
+OC2_SLIRP_API void oc2_slirp_destroy(oc2_slirp *instance);
+OC2_SLIRP_API void oc2_slirp_input(oc2_slirp *instance, const uint8_t *frame, size_t length);
+OC2_SLIRP_API void oc2_slirp_poll(oc2_slirp *instance, int timeout_ms);
+OC2_SLIRP_API size_t oc2_slirp_next_frame(oc2_slirp *instance, uint8_t *destination, size_t capacity);
 
 #endif
