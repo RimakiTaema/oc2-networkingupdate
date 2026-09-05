@@ -41,6 +41,37 @@ struct oc2_slirp {
     size_t poll_count;
 };
 
+struct oc2_timer {
+    SlirpTimerCb callback;
+    void *opaque;
+};
+
+static void guest_error(const char *message, void *opaque) {
+    (void) message;
+    (void) opaque;
+}
+
+static void *timer_new(SlirpTimerCb callback, void *opaque, void *instance) {
+    (void) instance;
+    struct oc2_timer *timer = calloc(1, sizeof(*timer));
+    if (timer) {
+        timer->callback = callback;
+        timer->opaque = opaque;
+    }
+    return timer;
+}
+
+static void timer_free(void *opaque, void *instance) {
+    (void) instance;
+    free(opaque);
+}
+
+static void timer_mod(void *opaque, int64_t expire_time, void *instance) {
+    (void) opaque;
+    (void) expire_time;
+    (void) instance;
+}
+
 static int64_t clock_ns(void *opaque) {
 #ifdef _WIN32
     LARGE_INTEGER frequency;
@@ -122,7 +153,11 @@ oc2_slirp *oc2_slirp_create(void) {
     SlirpCb callbacks;
     memset(&callbacks, 0, sizeof(callbacks));
     callbacks.send_packet = send_packet;
+    callbacks.guest_error = guest_error;
     callbacks.clock_get_ns = clock_ns;
+    callbacks.timer_new = timer_new;
+    callbacks.timer_free = timer_free;
+    callbacks.timer_mod = timer_mod;
     /* Use the compatibility polling callback: it includes the event mask. */
 
     instance->slirp = slirp_new(&config, &callbacks, instance);

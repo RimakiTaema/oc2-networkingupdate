@@ -39,6 +39,11 @@ jobs:
             platform: windows-x86_64
             install: pacman --noconfirm -S --needed mingw-w64-x86_64-gcc mingw-w64-x86_64-libslirp mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja
             generator: -G Ninja
+          - os: macos-14
+            shell: bash
+            platform: macos-aarch64
+            install: brew install libslirp cmake
+            generator: ""
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -56,13 +61,18 @@ jobs:
           msystem: MINGW64
           update: true
       - run: ${{ matrix.install }}
-      - run: cmake -S native/libslirp -B build/native ${{ matrix.generator }} -DCMAKE_BUILD_TYPE=Release
+      - if: runner.os != 'macOS'
+        run: cmake -S native/libslirp -B build/native ${{ matrix.generator }} -DCMAKE_BUILD_TYPE=Release
+      - if: runner.os == 'macOS'
+        run: cmake -S native/libslirp -B build/native -DCMAKE_BUILD_TYPE=Release -DSLIRP_INCLUDE_DIR="$(brew --prefix libslirp)/include" -DSLIRP_LIBRARY="$(brew --prefix libslirp)/lib/libslirp.dylib"
       - run: cmake --build build/native
       - run: ./build/native/oc2-slirp-smoke
       - if: runner.os == 'Linux'
         run: mkdir -p native-package/${{ matrix.platform }} && cp build/native/liboc2slirp.so native-package/${{ matrix.platform }}/liboc2slirp.so
       - if: runner.os == 'Windows'
         run: mkdir -p native-package/${{ matrix.platform }} && cp build/native/oc2slirp.dll native-package/${{ matrix.platform }}/oc2slirp.dll
+      - if: runner.os == 'macOS'
+        run: mkdir -p native-package/${{ matrix.platform }} && cp build/native/liboc2slirp.dylib native-package/${{ matrix.platform }}/liboc2slirp.dylib
       - uses: actions/upload-artifact@v7
         with:
           name: native-${{ matrix.platform }}

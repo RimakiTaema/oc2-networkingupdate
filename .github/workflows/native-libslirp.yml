@@ -23,6 +23,10 @@ jobs:
             shell: msys2 {0}
             install: pacman --noconfirm -S --needed mingw-w64-x86_64-gcc mingw-w64-x86_64-libslirp mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja
             generator: -G Ninja
+          - os: macos-14
+            shell: bash
+            install: brew install libslirp cmake
+            generator: ""
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -39,7 +43,10 @@ jobs:
           msystem: MINGW64
           update: true
       - run: ${{ matrix.install }}
-      - run: cmake -S native/libslirp -B build/native ${{ matrix.generator }} -DCMAKE_BUILD_TYPE=Release
+      - if: runner.os != 'macOS'
+        run: cmake -S native/libslirp -B build/native ${{ matrix.generator }} -DCMAKE_BUILD_TYPE=Release
+      - if: runner.os == 'macOS'
+        run: cmake -S native/libslirp -B build/native -DCMAKE_BUILD_TYPE=Release -DSLIRP_INCLUDE_DIR="$(brew --prefix libslirp)/include" -DSLIRP_LIBRARY="$(brew --prefix libslirp)/lib/libslirp.dylib"
       - run: cmake --build build/native
       - run: ./build/native/oc2-slirp-smoke
       - if: runner.os == 'Linux'
@@ -52,3 +59,8 @@ jobs:
         with:
           name: oc2slirp-windows
           path: build/native/oc2slirp.dll
+      - if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: oc2slirp-macos
+          path: build/native/liboc2slirp.dylib
