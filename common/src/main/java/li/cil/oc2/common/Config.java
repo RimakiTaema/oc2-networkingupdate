@@ -83,7 +83,7 @@ public final class Config {
     @Path("admin.virtual_network")
     public static int hubEthernetFramesPerTick = 32;
     @Path("admin.external_network")
-    public static boolean externalNetworkEnabled = false;
+    public static boolean externalNetworkEnabled;
     @Path("admin.external_network")
     @Min(0)
     public static int externalNetworkFramesPerTick = 32;
