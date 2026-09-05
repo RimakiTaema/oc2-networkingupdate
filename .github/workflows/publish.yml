@@ -12,6 +12,10 @@ on:
         description: "Publish to the fnuecke/maven repository"
         type: boolean
         default: false
+      publish_mods:
+        description: "Publish the built JARs to Modrinth and CurseForge"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -117,7 +121,7 @@ jobs:
           exit 1
 
   publish:
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.publish_mods)
     strategy:
       fail-fast: false
       matrix:
@@ -142,5 +146,7 @@ jobs:
 
           fail-mode: skip
 
+          modrinth-id: b0YVdq8k
           modrinth-token: ${{ secrets.MODRINTH_API_KEY }}
+          curseforge-id: 437654
           curseforge-token: ${{ secrets.CURSEFORGE_API_KEY }}
