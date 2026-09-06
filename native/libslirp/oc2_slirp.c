@@ -53,9 +53,15 @@ static void guest_error(const char *message, void *opaque) {
     (void) opaque;
 }
 
-/* The poll set is rebuilt by slirp_pollfds_fill_socket on every server tick. */
-static void poll_socket_changed(slirp_os_socket socket, void *opaque) {
-    (void) socket;
+/* The poll set is rebuilt by slirp_pollfds_fill on every server tick.
+ * Uses the deprecated API for compatibility with older libslirp versions. */
+static void register_poll_fd(int fd, void *opaque) {
+    (void) fd;
+    (void) opaque;
+}
+
+static void unregister_poll_fd(int fd, void *opaque) {
+    (void) fd;
     (void) opaque;
 }
 
@@ -114,14 +120,14 @@ static oc2_slirp_ssize_t send_packet(const void *buffer, size_t length, void *op
     return (oc2_slirp_ssize_t) length;
 }
 
-static int add_poll_socket(slirp_os_socket socket, int events, void *opaque) {
+static int add_poll_fd(int fd, int events, void *opaque) {
     oc2_slirp *instance = opaque;
     if (instance->poll_count == OC2_SLIRP_MAX_POLLS) {
         return -1;
     }
 
     struct pollfd *poll = &instance->polls[instance->poll_count];
-    poll->fd = (oc2_slirp_socket_t) socket;
+    poll->fd = (oc2_slirp_socket_t) fd;
     poll->events = 0;
     poll->revents = 0;
     if (events & SLIRP_POLL_IN) poll->events |= POLLIN;
@@ -169,8 +175,8 @@ oc2_slirp *oc2_slirp_create(void) {
     instance->callbacks.timer_new = timer_new;
     instance->callbacks.timer_free = timer_free;
     instance->callbacks.timer_mod = timer_mod;
-    instance->callbacks.register_poll_socket = poll_socket_changed;
-    instance->callbacks.unregister_poll_socket = poll_socket_changed;
+    instance->callbacks.register_poll_fd = register_poll_fd;
+    instance->callbacks.unregister_poll_fd = unregister_poll_fd;
     instance->callbacks.notify = notify;
     instance->slirp = slirp_new(&config, &instance->callbacks, instance);
     if (!instance->slirp) {
@@ -196,7 +202,7 @@ void oc2_slirp_poll(oc2_slirp *instance, int timeout_ms) {
     if (!instance || !instance->slirp) return;
     uint32_t timeout = timeout_ms < 0 ? UINT32_MAX : (uint32_t) timeout_ms;
     instance->poll_count = 0;
-    slirp_pollfds_fill_socket(instance->slirp, &timeout, add_poll_socket, instance);
+    slirp_pollfds_fill(instance->slirp, &timeout, add_poll_fd, instance);
     int wait_ms = timeout > 1000 ? 1000 : (int) timeout;
     if (wait_ms < 0) wait_ms = 0;
 #ifdef _WIN32
