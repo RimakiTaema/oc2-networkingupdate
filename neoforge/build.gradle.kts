@@ -75,8 +75,6 @@ configurations.named("modRuntimeOnly") { extendsFrom(devOnlyMods) }
 dependencies {
     neoForge(libs.neoforge.platform)
     modImplementation(libs.neoforge.architectury)
-    modImplementation("maven.modrinth:AANobbMI:uMOpc5uV")
-
     // Allows `remapSourcesJar` to resolve `@ExpectPlatform` in the common sources it bundles.
     compileOnly(libs.architectury.injectables)
 
