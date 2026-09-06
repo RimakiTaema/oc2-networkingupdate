@@ -1,0 +1,30 @@
+#!/bin/sh
+# Probe without configuring ordinary LAN cards. Keep udhcpc running for renewals.
+script_dir=$(dirname "$(readlink -f "$0")")
+case "${1:-start}" in
+    start)
+        mkdir -p /run/oc2-network
+        cp "$script_dir/../bin/oc2-external-dhcp.sh" /run/oc2-network/dhcp-hook
+        chmod 755 /run/oc2-network/dhcp-hook
+        for nic in /sys/class/net/eth*; do
+            [ -e "$nic/address" ] || continue
+            iface=${nic##*/}
+            pidfile=/run/oc2-network/$iface.pid
+            if [ -s "$pidfile" ] && kill -0 "$(cat "$pidfile")" 2>/dev/null; then
+                continue
+            fi
+            # Preserve interfaces already configured by the user.
+            ip -4 addr show dev "$iface" | grep -q 'inet ' && continue
+            ip link set "$iface" up || continue
+            udhcpc -f -n -t 5 -T 3 -i "$iface" -p "$pidfile" \
+                -s /run/oc2-network/dhcp-hook > /run/oc2-network/$iface.log 2>&1 &
+        done
+        ;;
+    stop)
+        for pidfile in /run/oc2-network/eth*.pid; do
+            [ -s "$pidfile" ] || continue
+            kill "$(cat "$pidfile")" 2>/dev/null
+        done
+        ;;
+    *) echo "Usage: $0 {start|stop}"; exit 1 ;;
+esac
