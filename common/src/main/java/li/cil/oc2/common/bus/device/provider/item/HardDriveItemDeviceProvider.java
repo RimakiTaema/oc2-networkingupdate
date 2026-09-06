@@ -38,7 +38,7 @@ public final class HardDriveItemDeviceProvider extends AbstractItemDeviceProvide
         final ItemStack stack = query.getItemStack();
         final BlockDeviceData data = getData(query);
         return Optional.of(data != null
-            ? new HardDriveDeviceWithInitialData(stack, data.getBlockDevice(), false, LocationSupplierUtils.of(query))
+            ? new HardDriveDeviceWithInitialData(stack, data.getBlockDevice(), getCapacity(query), false, LocationSupplierUtils.of(query))
             : new HardDriveDevice(stack, getCapacity(query), false, LocationSupplierUtils.of(query)));
     }
 
@@ -59,7 +59,7 @@ public final class HardDriveItemDeviceProvider extends AbstractItemDeviceProvide
         final ItemStack stack = query.getItemStack();
         final BlockDeviceData data = getData(query);
         if (data != null) {
-            return (int) Math.max(data.getBlockDevice().getCapacity(), 0);
+            return (int) Math.max(data.getBlockDevice().getCapacity(), ((HardDriveItem) stack.getItem()).getCapacity(stack));
         }
 
         final HardDriveItem item = (HardDriveItem) stack.getItem();

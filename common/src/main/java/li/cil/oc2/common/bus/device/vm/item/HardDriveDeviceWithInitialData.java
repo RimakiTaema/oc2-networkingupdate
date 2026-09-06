@@ -21,8 +21,8 @@ public final class HardDriveDeviceWithInitialData extends HardDriveDevice {
 
     // --------------------------------------------------------------------- //
 
-    public HardDriveDeviceWithInitialData(final ItemStack identity, final BlockDevice base, final boolean readonly, final Supplier<Optional<BlockLocation>> location) {
-        super(identity, (int) base.getCapacity(), readonly, location);
+    public HardDriveDeviceWithInitialData(final ItemStack identity, final BlockDevice base, final int capacity, final boolean readonly, final Supplier<Optional<BlockLocation>> location) {
+        super(identity, capacity, readonly, location);
         this.base = base;
     }
 

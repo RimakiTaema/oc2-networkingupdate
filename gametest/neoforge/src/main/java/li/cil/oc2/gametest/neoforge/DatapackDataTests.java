@@ -95,11 +95,19 @@ public final class DatapackDataTests {
         requireDrive(Items.HARD_DRIVE_SMALL.get(), HDD, true);
         requireDrive(Items.HARD_DRIVE_MEDIUM.get(), HDD, false);
         requireDrive(Items.HARD_DRIVE_LARGE.get(), HDD, false);
+        requireDrive(Items.HARD_DRIVE_16MB.get(), HDD, false);
+        requireDrive(Items.HARD_DRIVE_32MB.get(), HDD, false);
+        requireDrive(Items.HARD_DRIVE_64MB.get(), HDD, false);
+        requireDrive(Items.HARD_DRIVE_128MB.get(), HDD, false);
 
         final BlockDeviceData buildroot = BlockDeviceDataRegistry.BUILDROOT.get();
         requireDrive(Items.HARD_DRIVE_SMALL.get(), buildroot, false);
         requireDrive(Items.HARD_DRIVE_MEDIUM.get(), buildroot, false);
         requireDrive(Items.HARD_DRIVE_LARGE.get(), buildroot, true);
+        requireDrive(Items.HARD_DRIVE_16MB.get(), buildroot, false);
+        requireDrive(Items.HARD_DRIVE_32MB.get(), buildroot, false);
+        requireDrive(Items.HARD_DRIVE_64MB.get(), buildroot, false);
+        requireDrive(Items.HARD_DRIVE_128MB.get(), buildroot, false);
 
         helper.succeed();
     }

@@ -48,7 +48,11 @@ public final class ModItemTagsProvider extends ItemTagsProvider {
         tag(DEVICES_HARD_DRIVE).add(
             Items.HARD_DRIVE_SMALL.get(),
             Items.HARD_DRIVE_MEDIUM.get(),
-            Items.HARD_DRIVE_LARGE.get()
+            Items.HARD_DRIVE_LARGE.get(),
+            Items.HARD_DRIVE_16MB.get(),
+            Items.HARD_DRIVE_32MB.get(),
+            Items.HARD_DRIVE_64MB.get(),
+            Items.HARD_DRIVE_128MB.get()
         );
         tag(DEVICES_FLASH_MEMORY).add(
             Items.FLASH_MEMORY.get()
@@ -83,6 +87,10 @@ public final class ModItemTagsProvider extends ItemTagsProvider {
             Items.HARD_DRIVE_SMALL.get(),
             Items.HARD_DRIVE_MEDIUM.get(),
             Items.HARD_DRIVE_LARGE.get(),
+            Items.HARD_DRIVE_16MB.get(),
+            Items.HARD_DRIVE_32MB.get(),
+            Items.HARD_DRIVE_64MB.get(),
+            Items.HARD_DRIVE_128MB.get(),
             Items.KEYBOARD.get(),
             Items.MEMORY_SMALL.get(),
             Items.MEMORY_MEDIUM.get(),

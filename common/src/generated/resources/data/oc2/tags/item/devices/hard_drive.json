@@ -2,6 +2,10 @@
   "values": [
     "oc2:hard_drive_small",
     "oc2:hard_drive_medium",
-    "oc2:hard_drive_large"
+    "oc2:hard_drive_large",
+    "oc2:hard_drive_16mb",
+    "oc2:hard_drive_32mb",
+    "oc2:hard_drive_64mb",
+    "oc2:hard_drive_128mb"
   ]
 }

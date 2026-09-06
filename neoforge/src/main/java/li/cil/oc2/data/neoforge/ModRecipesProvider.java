@@ -285,6 +285,62 @@ public final class ModRecipesProvider extends RecipeProvider {
             .unlockedBy("has_robot", inventoryChange(Items.ROBOT.get()))
             .save(consumer);
 
+        ShapedRecipeBuilder
+            .shaped(RecipeCategory.MISC, Items.HARD_DRIVE_16MB.get())
+            .pattern("NRN")
+            .pattern("EBE")
+            .pattern("BTB")
+            .define('N', Tags.Items.INGOTS_NETHERITE)
+            .define('R', Tags.Items.GEMS_DIAMOND)
+            .define('T', Items.TRANSISTOR.get())
+            .define('B', Items.CIRCUIT_BOARD.get())
+            .define('E', Tags.Items.GEMS_EMERALD)
+            .unlockedBy("has_computer", inventoryChange(Items.COMPUTER.get()))
+            .unlockedBy("has_robot", inventoryChange(Items.ROBOT.get()))
+            .save(consumer);
+
+        ShapedRecipeBuilder
+            .shaped(RecipeCategory.MISC, Items.HARD_DRIVE_32MB.get())
+            .pattern("NRN")
+            .pattern("EBE")
+            .pattern("BTB")
+            .define('N', Tags.Items.INGOTS_NETHERITE)
+            .define('R', Tags.Items.GEMS_DIAMOND)
+            .define('T', Items.TRANSISTOR.get())
+            .define('B', Items.CIRCUIT_BOARD.get())
+            .define('E', Tags.Items.GEMS_EMERALD)
+            .unlockedBy("has_computer", inventoryChange(Items.COMPUTER.get()))
+            .unlockedBy("has_robot", inventoryChange(Items.ROBOT.get()))
+            .save(consumer);
+
+        ShapedRecipeBuilder
+            .shaped(RecipeCategory.MISC, Items.HARD_DRIVE_64MB.get())
+            .pattern("NRN")
+            .pattern("EBE")
+            .pattern("BTB")
+            .define('N', Tags.Items.INGOTS_NETHERITE)
+            .define('R', Tags.Items.GEMS_DIAMOND)
+            .define('T', Items.TRANSISTOR.get())
+            .define('B', Items.CIRCUIT_BOARD.get())
+            .define('E', Tags.Items.GEMS_EMERALD)
+            .unlockedBy("has_computer", inventoryChange(Items.COMPUTER.get()))
+            .unlockedBy("has_robot", inventoryChange(Items.ROBOT.get()))
+            .save(consumer);
+
+        ShapedRecipeBuilder
+            .shaped(RecipeCategory.MISC, Items.HARD_DRIVE_128MB.get())
+            .pattern("NRN")
+            .pattern("EBE")
+            .pattern("BTB")
+            .define('N', Tags.Items.INGOTS_NETHERITE)
+            .define('R', Tags.Items.GEMS_DIAMOND)
+            .define('T', Items.TRANSISTOR.get())
+            .define('B', Items.CIRCUIT_BOARD.get())
+            .define('E', Tags.Items.GEMS_EMERALD)
+            .unlockedBy("has_computer", inventoryChange(Items.COMPUTER.get()))
+            .unlockedBy("has_robot", inventoryChange(Items.ROBOT.get()))
+            .save(consumer);
+
         ToolRecipeBuilder
             .toolRecipe(Items.HARD_DRIVE_LARGE.get().withData(BlockDeviceDataRegistry.BUILDROOT.getId()))
             .requires(Items.HARD_DRIVE_LARGE.get())
@@ -293,11 +349,67 @@ public final class ModRecipesProvider extends RecipeProvider {
             .save(consumer, API.MOD_ID + ":hard_drive_large_preloaded");
 
         ToolRecipeBuilder
+            .toolRecipe(Items.HARD_DRIVE_16MB.get().withData(BlockDeviceDataRegistry.BUILDROOT.getId()))
+            .requires(Items.HARD_DRIVE_16MB.get())
+            .requires(Items.CPU_RISCV.get())
+            .unlockedBy("has_cpu_riscv", inventoryChange(Items.CPU_RISCV.get()))
+            .save(consumer, API.MOD_ID + ":hard_drive_16mb_preloaded");
+
+        ToolRecipeBuilder
+            .toolRecipe(Items.HARD_DRIVE_32MB.get().withData(BlockDeviceDataRegistry.BUILDROOT.getId()))
+            .requires(Items.HARD_DRIVE_32MB.get())
+            .requires(Items.CPU_RISCV.get())
+            .unlockedBy("has_cpu_riscv", inventoryChange(Items.CPU_RISCV.get()))
+            .save(consumer, API.MOD_ID + ":hard_drive_32mb_preloaded");
+
+        ToolRecipeBuilder
+            .toolRecipe(Items.HARD_DRIVE_64MB.get().withData(BlockDeviceDataRegistry.BUILDROOT.getId()))
+            .requires(Items.HARD_DRIVE_64MB.get())
+            .requires(Items.CPU_RISCV.get())
+            .unlockedBy("has_cpu_riscv", inventoryChange(Items.CPU_RISCV.get()))
+            .save(consumer, API.MOD_ID + ":hard_drive_64mb_preloaded");
+
+        ToolRecipeBuilder
+            .toolRecipe(Items.HARD_DRIVE_128MB.get().withData(BlockDeviceDataRegistry.BUILDROOT.getId()))
+            .requires(Items.HARD_DRIVE_128MB.get())
+            .requires(Items.CPU_RISCV.get())
+            .unlockedBy("has_cpu_riscv", inventoryChange(Items.CPU_RISCV.get()))
+            .save(consumer, API.MOD_ID + ":hard_drive_128mb_preloaded");
+
+        ToolRecipeBuilder
             .toolRecipe(Items.HARD_DRIVE_LARGE.get())
             .requires(Items.WRENCH.get())
             .requires(Items.HARD_DRIVE_LARGE.get())
             .unlockedBy("has_hard_drive_large", inventoryChange(Items.HARD_DRIVE_LARGE.get()))
             .save(consumer, API.MOD_ID + ":hard_drive_large_erase");
+
+        ToolRecipeBuilder
+            .toolRecipe(Items.HARD_DRIVE_16MB.get())
+            .requires(Items.WRENCH.get())
+            .requires(Items.HARD_DRIVE_16MB.get())
+            .unlockedBy("has_hard_drive_16mb", inventoryChange(Items.HARD_DRIVE_16MB.get()))
+            .save(consumer, API.MOD_ID + ":hard_drive_16mb_erase");
+
+        ToolRecipeBuilder
+            .toolRecipe(Items.HARD_DRIVE_32MB.get())
+            .requires(Items.WRENCH.get())
+            .requires(Items.HARD_DRIVE_32MB.get())
+            .unlockedBy("has_hard_drive_32mb", inventoryChange(Items.HARD_DRIVE_32MB.get()))
+            .save(consumer, API.MOD_ID + ":hard_drive_32mb_erase");
+
+        ToolRecipeBuilder
+            .toolRecipe(Items.HARD_DRIVE_64MB.get())
+            .requires(Items.WRENCH.get())
+            .requires(Items.HARD_DRIVE_64MB.get())
+            .unlockedBy("has_hard_drive_64mb", inventoryChange(Items.HARD_DRIVE_64MB.get()))
+            .save(consumer, API.MOD_ID + ":hard_drive_64mb_erase");
+
+        ToolRecipeBuilder
+            .toolRecipe(Items.HARD_DRIVE_128MB.get())
+            .requires(Items.WRENCH.get())
+            .requires(Items.HARD_DRIVE_128MB.get())
+            .unlockedBy("has_hard_drive_128mb", inventoryChange(Items.HARD_DRIVE_128MB.get()))
+            .save(consumer, API.MOD_ID + ":hard_drive_128mb_erase");
 
         ShapedRecipeBuilder
             .shaped(RecipeCategory.MISC, Items.FLASH_MEMORY.get())

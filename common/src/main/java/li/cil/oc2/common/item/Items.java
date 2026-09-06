@@ -61,8 +61,18 @@ public final class Items {
     public static final RegistrySupplier<HardDriveItem> HARD_DRIVE_LARGE = register("hard_drive_large", () ->
         new HardDriveItem(Constants.HARD_DRIVE_LARGE_SIZE, DyeColor.CYAN));
 
+    public static final RegistrySupplier<HardDriveItem> HARD_DRIVE_16MB = register("hard_drive_16mb", () ->
+        new HardDriveItem(16 * Constants.MEGABYTE, DyeColor.BLUE));
+    public static final RegistrySupplier<HardDriveItem> HARD_DRIVE_32MB = register("hard_drive_32mb", () ->
+        new HardDriveItem(32 * Constants.MEGABYTE, DyeColor.PURPLE));
+    public static final RegistrySupplier<HardDriveItem> HARD_DRIVE_64MB = register("hard_drive_64mb", () ->
+        new HardDriveItem(64 * Constants.MEGABYTE, DyeColor.ORANGE));
+    public static final RegistrySupplier<HardDriveItem> HARD_DRIVE_128MB = register("hard_drive_128mb", () ->
+        new HardDriveItem(128 * Constants.MEGABYTE, DyeColor.RED));
+
     public static final List<RegistrySupplier<HardDriveItem>> HARD_DRIVES =
-        List.of(HARD_DRIVE_SMALL, HARD_DRIVE_MEDIUM, HARD_DRIVE_LARGE);
+        List.of(HARD_DRIVE_SMALL, HARD_DRIVE_MEDIUM, HARD_DRIVE_LARGE,
+            HARD_DRIVE_16MB, HARD_DRIVE_32MB, HARD_DRIVE_64MB, HARD_DRIVE_128MB);
 
     public static final RegistrySupplier<FlashMemoryItem> FLASH_MEMORY = register("flash_memory", () ->
         new FlashMemoryItem(Constants.FLASH_MEMORY_SIZE));

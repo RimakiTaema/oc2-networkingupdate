@@ -37,6 +37,14 @@ public final class ModItemModelProvider extends ItemModelProvider {
             .texture("layer1", "item/hard_drive_tint");
         simple(Items.HARD_DRIVE_LARGE, "item/hard_drive_base")
             .texture("layer1", "item/hard_drive_tint");
+        simple(Items.HARD_DRIVE_16MB, "item/hard_drive_base")
+            .texture("layer1", "item/hard_drive_tint");
+        simple(Items.HARD_DRIVE_32MB, "item/hard_drive_base")
+            .texture("layer1", "item/hard_drive_tint");
+        simple(Items.HARD_DRIVE_64MB, "item/hard_drive_base")
+            .texture("layer1", "item/hard_drive_tint");
+        simple(Items.HARD_DRIVE_128MB, "item/hard_drive_base")
+            .texture("layer1", "item/hard_drive_tint");
         simple(Items.FLASH_MEMORY, "item/flash_memory_base")
             .texture("layer1", "item/flash_memory_tint");
         simple(Items.FLOPPY, "item/floppy_base")
