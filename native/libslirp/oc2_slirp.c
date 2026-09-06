@@ -53,6 +53,16 @@ static void guest_error(const char *message, void *opaque) {
     (void) opaque;
 }
 
+/* The poll set is rebuilt by slirp_pollfds_fill_socket on every server tick. */
+static void poll_socket_changed(slirp_os_socket socket, void *opaque) {
+    (void) socket;
+    (void) opaque;
+}
+
+static void notify(void *opaque) {
+    (void) opaque;
+}
+
 static void *timer_new(SlirpTimerCb callback, void *opaque, void *instance) {
     (void) instance;
     struct oc2_timer *timer = calloc(1, sizeof(*timer));
@@ -159,6 +169,9 @@ oc2_slirp *oc2_slirp_create(void) {
     instance->callbacks.timer_new = timer_new;
     instance->callbacks.timer_free = timer_free;
     instance->callbacks.timer_mod = timer_mod;
+    instance->callbacks.register_poll_socket = poll_socket_changed;
+    instance->callbacks.unregister_poll_socket = poll_socket_changed;
+    instance->callbacks.notify = notify;
     instance->slirp = slirp_new(&config, &instance->callbacks, instance);
     if (!instance->slirp) {
         free(instance);
