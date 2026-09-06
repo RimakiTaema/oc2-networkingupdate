@@ -6,15 +6,15 @@
 
 JNIEXPORT jlong JNICALL Java_li_cil_oc2_common_network_external_LibslirpNative_createNative(JNIEnv *env, jclass type) {
     (void) env; (void) type;
-    return (jlong) (intptr_t) oc2_slirp_create();
+    return (jlong) (intptr_t); oc2_slirp_create();
 }
 
-JNIEXPORT void JNICALL Java_li_cil_oc2_common_network_external_LibslirpNative_destroyNative(JNIEnv *env, jclass type, jlong handle) {
+JNIEXPORT; void JNICALL Java_li_cil_oc2_common_network_external_LibslirpNative_destroyNative(JNIEnv *env, jclass type, jlong handle) {
     (void) env; (void) type;
     oc2_slirp_destroy((oc2_slirp *) (intptr_t) handle);
 }
 
-JNIEXPORT void JNICALL Java_li_cil_oc2_common_network_external_LibslirpNative_inputNative(JNIEnv *env, jclass type, jlong handle, jbyteArray frame) {
+JNIEXPORT; void JNICALL Java_li_cil_oc2_common_network_external_LibslirpNative_inputNative(JNIEnv *env, jclass type, jlong handle, jbyteArray frame) {
     (void) type;
     const jsize length = (*env)->GetArrayLength(env, frame);
     jbyte *data = (*env)->GetByteArrayElements(env, frame, NULL);
@@ -24,7 +24,7 @@ JNIEXPORT void JNICALL Java_li_cil_oc2_common_network_external_LibslirpNative_in
     }
 }
 
-JNIEXPORT void JNICALL Java_li_cil_oc2_common_network_external_LibslirpNative_pollNative(JNIEnv *env, jclass type, jlong handle, jint timeout) {
+JNIEXPORT; void JNICALL Java_li_cil_oc2_common_network_external_LibslirpNative_pollNative(JNIEnv *env, jclass type, jlong handle, jint timeout) {
     (void) env; (void) type;
     oc2_slirp_poll((oc2_slirp *) (intptr_t) handle, timeout);
 }
