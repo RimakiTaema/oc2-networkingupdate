@@ -202,22 +202,13 @@ val nativeArchitecture = when (System.getProperty("os.arch").lowercase()) {
     "aarch64", "arm64" -> "aarch64"
     else -> error("Unsupported native-library architecture: ${System.getProperty("os.arch")}")
 }
-val nativePlatform: String
-val nativeLibraryFileName: String
-when (System.getProperty("os.name").lowercase()) {
-    in setOf("mac os x", "macos") -> {
-        nativePlatform = "macos-$nativeArchitecture"
-        nativeLibraryFileName = "liboc2slirp.dylib"
-    }
+val (nativePlatform, nativeLibraryFileName) = when (System.getProperty("os.name").lowercase()) {
+    "mac os x", "macos" -> "macos-$nativeArchitecture" to "liboc2slirp.dylib"
     else -> when {
-        System.getProperty("os.name").lowercase().contains("win") -> {
-            nativePlatform = "windows-$nativeArchitecture"
-            nativeLibraryFileName = "oc2slirp.dll"
-        }
-        System.getProperty("os.name").lowercase().contains("linux") -> {
-            nativePlatform = "linux-$nativeArchitecture"
-            nativeLibraryFileName = "liboc2slirp.so"
-        }
+        System.getProperty("os.name").lowercase().contains("win") ->
+            "windows-$nativeArchitecture" to "oc2slirp.dll"
+        System.getProperty("os.name").lowercase().contains("linux") ->
+            "linux-$nativeArchitecture" to "liboc2slirp.so"
         else -> error("Unsupported native-library operating system: ${System.getProperty("os.name")}")
     }
 }
