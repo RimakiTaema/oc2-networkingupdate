@@ -1,3 +1,5 @@
+@file:Suppress("AvoidApplyPluginMethod","UnstableApiUsage")
+
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.RemapJarTask
@@ -10,10 +12,10 @@ plugins {
     alias(libs.plugins.spotless)
 }
 
-val modId: String by project
-val modVersion: String by project
-val mavenGroup: String by project
-val enabledPlatforms: String by project
+val modId = project.property("modId") as String
+val modVersion = project.property("modVersion") as String
+val mavenGroup = project.property("mavenGroup") as String
+val enabledPlatforms = project.property("enabledPlatforms") as String
 val minecraftVersion: String = libs.versions.minecraft.get()
 
 subprojects {
@@ -52,6 +54,15 @@ subprojects {
                 includeGroup("li.cil.markdown_manual")
             }
         }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "Modrinth"
+                    url = uri("https://api.modrinth.com/maven")
+                }
+            }
+            filter { includeGroup("maven.modrinth") }
+        }
         mavenCentral()
     }
 
@@ -85,8 +96,8 @@ for (platform in enabledPlatforms.split(',')) {
             loader(platform)
         }
 
-        val common: Configuration by configurations.creating
-        val shadowBundle: Configuration by configurations.creating
+        val common = configurations.create("common")
+        val shadowBundle = configurations.create("shadowBundle")
 
         configurations {
             common.isCanBeResolved = true
@@ -145,8 +156,8 @@ for (extraModule in listOf("instrumentation", "gametest")) {
                 loader(platform)
             }
 
-            val common: Configuration by configurations.creating
-            val bundle: Configuration by configurations.creating
+            val common = configurations.create("common")
+            val bundle = configurations.create("bundle")
 
             configurations {
                 common.isCanBeResolved = true
@@ -182,7 +193,77 @@ for (extraModule in listOf("instrumentation", "gametest")) {
     }
 }
 
+val cmakeExecutable = providers.gradleProperty("cmakeExecutable").orNull
+    ?: listOf("/opt/homebrew/bin/cmake", "/usr/local/bin/cmake", "cmake")
+        .first { it == "cmake" || file(it).canExecute() }
+val jdkHome = System.getProperty("java.home")
+val nativeArchitecture = when (System.getProperty("os.arch").lowercase()) {
+    "amd64", "x86_64" -> "x86_64"
+    "aarch64", "arm64" -> "aarch64"
+    else -> error("Unsupported native-library architecture: ${System.getProperty("os.arch")}")
+}
+val nativePlatform: String
+val nativeLibraryFileName: String
+when (System.getProperty("os.name").lowercase()) {
+    in setOf("mac os x", "macos") -> {
+        nativePlatform = "macos-$nativeArchitecture"
+        nativeLibraryFileName = "liboc2slirp.dylib"
+    }
+    else -> when {
+        System.getProperty("os.name").lowercase().contains("win") -> {
+            nativePlatform = "windows-$nativeArchitecture"
+            nativeLibraryFileName = "oc2slirp.dll"
+        }
+        System.getProperty("os.name").lowercase().contains("linux") -> {
+            nativePlatform = "linux-$nativeArchitecture"
+            nativeLibraryFileName = "liboc2slirp.so"
+        }
+        else -> error("Unsupported native-library operating system: ${System.getProperty("os.name")}")
+    }
+}
+
+val nativeLibConfigure = tasks.register<Exec>("nativeLibConfigure") {
+    group = "native"
+    description = "Configures the native libslirp CMake build."
+
+    workingDir(rootProject.projectDir)
+    environment("JAVA_HOME", jdkHome)
+
+    commandLine(
+        cmakeExecutable,
+        "-S", "native/libslirp",
+        "-B", "build/native",
+        "-DCMAKE_BUILD_TYPE=Release"
+    )
+}
+
+val nativeLibCompile = tasks.register<Exec>("nativeLibCompile") {
+    group = "native"
+    description = "Compile the native libslirp CMake build."
+
+    dependsOn(nativeLibConfigure)
+    workingDir(rootProject.projectDir)
+    environment("JAVA_HOME", jdkHome)
+
+    commandLine(
+        cmakeExecutable,
+        "--build", "build/native"
+    )
+}
+
+val nativeLibPackage = tasks.register<Copy>("nativeLibPackage") {
+    group = "native"
+    description = "Packages the local native bridge for the current platform."
+
+    dependsOn(nativeLibCompile)
+    from(layout.buildDirectory.file("native/$nativeLibraryFileName"))
+    into(layout.buildDirectory.dir("native-package/$nativePlatform"))
+}
+
 tasks.named("build") {
+    if (!providers.gradleProperty("nativeLibDir").isPresent) {
+        dependsOn(nativeLibPackage)
+    }
     dependsOn("apiJar", "apiSourcesJar")
 }
 

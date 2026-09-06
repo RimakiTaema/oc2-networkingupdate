@@ -53,6 +53,11 @@ tasks {
             from(nativeLibDir.map { file(it) }) {
                 into("assets/${modId}/native")
             }
+        } else {
+            dependsOn(rootProject.tasks.named("nativeLibPackage"))
+            from(rootProject.layout.buildDirectory.dir("native-package")) {
+                into("assets/${modId}/native")
+            }
         }
     }
 
