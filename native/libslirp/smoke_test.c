@@ -5,7 +5,9 @@
 int main(void) {
     oc2_slirp *instance = oc2_slirp_create();
     if (!instance) return 1;
-    oc2_slirp_poll(instance, 0);
+    for (int i = 0; i < 10000; i++) {
+        oc2_slirp_poll(instance, 0);
+    }
     oc2_slirp_destroy(instance);
     return 0;
 }

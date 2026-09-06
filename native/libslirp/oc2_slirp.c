@@ -33,6 +33,8 @@ struct oc2_frame {
 
 struct oc2_slirp {
     Slirp *slirp;
+    /* libslirp retains this pointer, so it must live with the instance. */
+    SlirpCb callbacks;
     struct oc2_frame frames[OC2_SLIRP_MAX_FRAMES];
     size_t read_index;
     size_t write_index;
@@ -102,7 +104,7 @@ static oc2_slirp_ssize_t send_packet(const void *buffer, size_t length, void *op
     return (oc2_slirp_ssize_t) length;
 }
 
-static int add_poll_socket(int socket, int events, void *opaque) {
+static int add_poll_socket(slirp_os_socket socket, int events, void *opaque) {
     oc2_slirp *instance = opaque;
     if (instance->poll_count == OC2_SLIRP_MAX_POLLS) {
         return -1;
@@ -150,17 +152,14 @@ oc2_slirp *oc2_slirp_create(void) {
     config.disable_host_loopback = true;
     config.in6_enabled = false;
 
-    SlirpCb callbacks;
-    memset(&callbacks, 0, sizeof(callbacks));
-    callbacks.send_packet = send_packet;
-    callbacks.guest_error = guest_error;
-    callbacks.clock_get_ns = clock_ns;
-    callbacks.timer_new = timer_new;
-    callbacks.timer_free = timer_free;
-    callbacks.timer_mod = timer_mod;
-    /* Use the compatibility polling callback: it includes the event mask. */
-
-    instance->slirp = slirp_new(&config, &callbacks, instance);
+    memset(&instance->callbacks, 0, sizeof(instance->callbacks));
+    instance->callbacks.send_packet = send_packet;
+    instance->callbacks.guest_error = guest_error;
+    instance->callbacks.clock_get_ns = clock_ns;
+    instance->callbacks.timer_new = timer_new;
+    instance->callbacks.timer_free = timer_free;
+    instance->callbacks.timer_mod = timer_mod;
+    instance->slirp = slirp_new(&config, &instance->callbacks, instance);
     if (!instance->slirp) {
         free(instance);
         return NULL;
@@ -184,7 +183,7 @@ void oc2_slirp_poll(oc2_slirp *instance, int timeout_ms) {
     if (!instance || !instance->slirp) return;
     uint32_t timeout = timeout_ms < 0 ? UINT32_MAX : (uint32_t) timeout_ms;
     instance->poll_count = 0;
-    slirp_pollfds_fill(instance->slirp, &timeout, add_poll_socket, instance);
+    slirp_pollfds_fill_socket(instance->slirp, &timeout, add_poll_socket, instance);
     int wait_ms = timeout > 1000 ? 1000 : (int) timeout;
     if (wait_ms < 0) wait_ms = 0;
 #ifdef _WIN32
