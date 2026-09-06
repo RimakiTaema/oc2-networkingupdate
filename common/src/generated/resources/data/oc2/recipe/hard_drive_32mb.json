@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "oc2:circuit_board"
+    },
+    "E": {
+      "tag": "c:gems/emerald"
+    },
+    "N": {
+      "tag": "c:ingots/netherite"
+    },
+    "R": {
+      "tag": "c:gems/diamond"
+    },
+    "T": {
+      "item": "oc2:transistor"
+    }
+  },
+  "pattern": [
+    "NRN",
+    "EBE",
+    "BTB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "oc2:hard_drive_32mb"
+  }
+}

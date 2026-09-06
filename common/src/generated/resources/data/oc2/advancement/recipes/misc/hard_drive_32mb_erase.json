@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_hard_drive_32mb": {
+      "conditions": {
+        "items": [
+          {
+            "items": "oc2:hard_drive_32mb"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "oc2:hard_drive_32mb_erase"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_hard_drive_32mb"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "oc2:hard_drive_32mb_erase"
+    ]
+  }
+}
